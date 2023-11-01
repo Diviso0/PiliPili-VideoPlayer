@@ -1,6 +1,7 @@
 package com.example.videoplayer;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -22,6 +23,9 @@ public class Player extends AppCompatActivity implements
     private static final String TAG = "MoviePlayerActivity";
     private MovieView mv_content;
     private TextView tv_open;
+    private TextView btn_fullscreen;
+    private TextView btn_portrait;
+
     private RelativeLayout rl_top;
     private VideoController vc_play;
     private Handler mHandler = new Handler();
@@ -35,9 +39,16 @@ public class Player extends AppCompatActivity implements
         mv_content = findViewById(R.id.mv_content);
         vc_play = findViewById(R.id.vc_play);
         tv_open = findViewById(R.id.tv_open);
+        btn_fullscreen = findViewById(R.id.btn_fullscreen);
+        btn_portrait = findViewById(R.id.btn_portrait);
+
+
         rl_top = findViewById(R.id.rl_top);
         mv_content.prepare(rl_top, vc_play);
         tv_open.setOnClickListener(this);
+        btn_fullscreen.setOnClickListener(this);
+        btn_portrait.setOnClickListener(this);
+
         vc_play.setOnSeekChangeListener(this);
         videoInfo = findViewById(R.id.videoInfo);
         player = findViewById(R.id.player);
@@ -132,7 +143,14 @@ public class Player extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.tv_open) {
-//            play("http://1.15.179.230:8081/TruE-%E9%BB%84%E9%BE%84_480p.mp4");
+            // 进入全屏播放模式
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (v.getId() == R.id.btn_fullscreen) {
+            // 进入全屏播放模式
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (v.getId() == R.id.btn_portrait) {
+            // 进入竖屏播放模式
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
@@ -162,11 +180,13 @@ public class Player extends AppCompatActivity implements
     public void onConfigurationChanged(@NonNull @NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // 切换到竖屏模式
             player.setLayoutParams(portraitParam);
             videoInfo.setVisibility(View.VISIBLE);
-        }
-        else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            player.setLayoutParams(landscapeParam);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 切换到全屏模式
+            player.setLayoutParams(new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             videoInfo.setVisibility(View.GONE);
         }
     }
